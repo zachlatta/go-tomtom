@@ -9,6 +9,10 @@ type GeocodeService struct {
 	client *Client
 }
 
+type reverseGeoResponseWrapper struct {
+	ReverseGeoResponse reverseGeoResponse `json:"reverseGeoResponse"`
+}
+
 type reverseGeoResponse struct {
 	ReverseGeoResults []ReverseGeoResult `json:"reverseGeoResult"`
 }
@@ -26,14 +30,15 @@ type ReverseGeoResult struct {
 	FormattedAddress string  `json:"formattedAddress"`
 }
 
-func (s *GeocodeService) ReverseGeocode(lat, long float64) ([]ReverseGeoResult, error) {
-	url, err := url.Parse("/reverseGeocode/3/json")
+func (s *GeocodeService) ReverseGeocode(lat, long float64) ([]ReverseGeoResult,
+	error) {
+	url, err := url.Parse("lbs/services/reverseGeocode/3/json")
 	if err != nil {
 		return nil, err
 	}
 
 	params := url.Query()
-	params.Set("point", fmt.Sprintf("%s,%s", lat, long))
+	params.Set("point", fmt.Sprintf("%f,%f", lat, long))
 	url.RawQuery = params.Encode()
 
 	req, err := s.client.NewRequest("GET", url.String(), nil)
@@ -41,11 +46,11 @@ func (s *GeocodeService) ReverseGeocode(lat, long float64) ([]ReverseGeoResult, 
 		return nil, err
 	}
 
-	respStruct := new(reverseGeoResponse)
-	_, err = s.client.Do(req, &respStruct)
+	respStruct := new(reverseGeoResponseWrapper)
+	err = s.client.Do(req, &respStruct)
 	if err != nil {
 		return nil, err
 	}
 
-	return respStruct.ReverseGeoResults, nil
+	return respStruct.ReverseGeoResponse.ReverseGeoResults, nil
 }

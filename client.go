@@ -3,6 +3,7 @@ package tomtom
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -101,10 +102,11 @@ func (c *Client) NewRequest(method, urlStr string,
 // Sends an API request and returns the API response. The API response is
 // decoded and stored in the value pointed to by v, or returned as an error if
 // an API error has occurred.
-func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
+func (c *Client) Do(req *http.Request, v interface{}) error {
+	fmt.Println(req.URL)
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	defer resp.Body.Close()
@@ -112,5 +114,5 @@ func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 	if v != nil {
 		err = json.NewDecoder(resp.Body).Decode(v)
 	}
-	return resp, err
+	return err
 }
