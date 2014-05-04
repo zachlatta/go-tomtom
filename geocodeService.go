@@ -21,7 +21,7 @@ type reverseGeoResponse struct {
 type ReverseGeoResult struct {
 	Latitude         float64 `json:"latitude"`
 	Longitude        float64 `json:"longitude"`
-	HouseNumber      float64 `json:"houseNumber"`
+	HouseNumber      string  `json:"houseNumber"`
 	Street           string  `json:"street"`
 	City             string  `json:"city"`
 	State            string  `json:"state"`
